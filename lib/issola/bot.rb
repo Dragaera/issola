@@ -10,7 +10,7 @@ module Issola
       @command_handler = Command::Handler.new
 
       @bot.message(start_with: Config::Bot::COMMAND_PREFIX) do |event|
-        puts "Got message: #{ event.message }"
+        @command_handler.handle(event)
       end
     end
 
