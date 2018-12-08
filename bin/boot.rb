@@ -18,4 +18,4 @@ else
   puts 'Dotenv not available, skipping.'
 end
 
-require 'larry'
+require 'issola'
