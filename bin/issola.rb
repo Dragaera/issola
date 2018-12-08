@@ -10,13 +10,21 @@ class InternalCommands
         event << 'Help help!'
       end
     end
+
+    cmd_handler.register do |cmd|
+      cmd.key :version
+      cmd.action do |event|
+        event << "Issola version: #{ Issola::VERSION }"
+      end
+    end
   end
 end
 
 puts 'Starting bot'
 
 bot = Issola::Bot.new(
-  token: Issola::Config::Discord::TOKEN
+  token: ENV.fetch('DISCORD_TOKEN'),
+  command_prefix: '!'
 )
 
 bot.register(InternalCommands.new)

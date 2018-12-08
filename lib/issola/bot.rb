@@ -2,14 +2,15 @@ require 'discordrb'
 
 module Issola
   class Bot
-    def initialize(token:)
+    def initialize(token:, command_prefix:)
       @bot = Discordrb::Bot.new(
         token:     token,
       )
 
+      @command_prefix = command_prefix
       @command_handler = Command::Handler.new
 
-      @bot.message(start_with: Config::Bot::COMMAND_PREFIX) do |event|
+      @bot.message(start_with: @command_prefix) do |event|
         @command_handler.handle(event)
       end
     end

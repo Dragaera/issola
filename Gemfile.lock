@@ -40,6 +40,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
+    warning (0.10.1)
     websocket (1.2.8)
     websocket-client-simple (0.3.0)
       event_emitter
@@ -52,6 +53,7 @@ DEPENDENCIES
   bundler
   dotenv
   issola!
+  warning
 
 BUNDLED WITH
    1.16.1
