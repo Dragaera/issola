@@ -1,0 +1,1 @@
+require 'issola/module/internal'

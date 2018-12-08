@@ -1,4 +1,4 @@
 require 'issola/bot'
-require 'issola/command'
-
+require 'issola/commands'
+require 'issola/module'
 require 'issola/version'

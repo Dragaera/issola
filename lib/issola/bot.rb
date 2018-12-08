@@ -7,10 +7,9 @@ module Issola
         token:     token,
       )
 
-      @command_prefix = command_prefix
-      @command_handler = Command::Handler.new
+      @command_handler = Commands::Handler.new(command_prefix: command_prefix)
 
-      @bot.message(start_with: @command_prefix) do |event|
+      @bot.message(start_with: command_prefix) do |event|
         @command_handler.handle(event)
       end
     end
