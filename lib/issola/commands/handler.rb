@@ -15,18 +15,28 @@ module Issola
       def handle(event)
         # Remove command prefix
         msg = event.message.content[@command_prefix.length..-1]
-        tokens = msg.split(' ')
-        cmd_key = tokens.shift
-        args = tokens.join(' ')
+        args = msg.split(' ')
+        cmd_key = args.shift
 
         cmd = @commands[cmd_key]
         if cmd
-          handle_command(cmd: cmd, arg_string: args, event: event)
+          handle_command(cmd: cmd, args: args, event: event)
         end
       end
 
       private
-      def handle_command(cmd:, arg_string:, event:)
+      def handle_command(cmd:, args:, event:)
+        named_arguments = {}
+        cmd.argument_store = named_arguments
+        opt = cmd.option_parser
+        opt.parse!(args)
+
+        event = Event.new(
+          command: cmd,
+          event: event,
+          named_arguments: named_arguments,
+          positional_arguments: args
+        )
         cmd.action.call(event)
       end
     end
