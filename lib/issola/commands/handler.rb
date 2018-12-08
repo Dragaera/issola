@@ -1,9 +1,10 @@
 module Issola
   module Commands
     class Handler
-      attr_reader :commands
+      attr_reader :commands, :bot
 
-      def initialize(command_prefix:)
+      def initialize(bot:, command_prefix:)
+        @bot = bot
         @command_prefix = command_prefix
         @commands = {}
       end
@@ -29,7 +30,18 @@ module Issola
         named_arguments = {}
         cmd.argument_store = named_arguments
         opt = cmd.option_parser
-        opt.parse!(args)
+
+        begin
+          opt.parse!(args)
+        rescue OptionParser::InvalidOption
+          event << opt.help
+          return false
+        end
+
+        unless args.length.between?(cmd.min_pos_args, cmd.max_pos_args)
+          event << opt.help
+          return false
+        end
 
         event = Event.new(
           command: cmd,
@@ -38,6 +50,8 @@ module Issola
           positional_arguments: args
         )
         cmd.action.call(event)
+
+        return true
       end
     end
   end

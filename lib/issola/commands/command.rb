@@ -3,7 +3,7 @@ require 'optparse'
 module Issola
   module Commands
     class Command
-      attr_reader :action, :description, :key, :option_parser
+      attr_reader :action, :description, :key, :option_parser, :max_pos_args, :min_pos_args
       attr_accessor :argument_store
 
       def initialize(
@@ -11,14 +11,18 @@ module Issola
         arguments: [],
         description: '(No help available)',
         key:,
+        max_pos_args: 0,
+        min_pos_args: 0,
         usage: nil
       )
-        @usage       = usage.to_s
-        @description = description.to_s
-        @key         = key.to_s
+        @usage        = usage.to_s
+        @description  = description.to_s
+        @key          = key.to_s
+        @max_pos_args = Integer(max_pos_args)
+        @min_pos_args = Integer(min_pos_args)
 
         @option_parser = OptionParser.new
-        @option_parser.banner = "Usage: #{ key } #{ usage || '[options]' }"
+        @option_parser.banner = "Usage: `#{ key } #{ usage_instructions }`"
 
         self.action = action if action
 
@@ -36,6 +40,13 @@ module Issola
         @option_parser.on(*args) do |val|
           @argument_store[key] = val
         end
+      end
+
+      private
+      def usage_instructions
+        return @usage if @usage
+        return ''     if @arguments.empty?
+        return '[options]'
       end
     end
   end
