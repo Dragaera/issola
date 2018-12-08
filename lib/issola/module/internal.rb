@@ -1,6 +1,9 @@
 module Issola
   module Module
     class Internal
+      SERVER_FORMAT_STRING = "Server count: %d\n%s"
+      SERVER_ENTRY_FORMAT_STRING = '- %s (Owner: %s/%s, Member count: %d)'
+
       def register(handler)
         @handler = handler
 
@@ -8,6 +11,9 @@ module Issola
           Commands::Command.new(
             key: :help,
             description: 'Show bot commands',
+            usage: '[command]',
+            min_pos_args: 0,
+            max_pos_args: 1,
             action: method(:cmd_help),
           )
         )
@@ -17,6 +23,14 @@ module Issola
             key: :version,
             description: 'Show bot version',
             action: method(:cmd_version)
+          )
+        )
+
+        handler.register(
+          Commands::Command.new(
+            key: :servers,
+            description: 'Show servers the bot is in',
+            action: method(:cmd_servers)
           )
         )
       end
@@ -48,8 +62,28 @@ module Issola
         end
       end
 
+
       def cmd_version(event)
         event << "Version: #{ Issola::VERSION }"
+      end
+
+
+      def cmd_servers(event)
+        bot = @handler.bot
+
+        if bot.connected?
+          server_entries = bot.servers.map do |_, server|
+            SERVER_ENTRY_FORMAT_STRING % [
+              server.name,
+              server.owner.username,
+              server.owner.id,
+              server.member_count
+            ]
+          end
+          event << SERVER_FORMAT_STRING % [bot.servers.length, server_entries.join("\n")]
+        else
+          event << 'Not connected to any servers'
+        end
       end
     end
   end
