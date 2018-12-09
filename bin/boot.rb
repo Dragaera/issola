@@ -29,3 +29,16 @@ else
 end
 
 require 'issola'
+
+Issola::Persistence.initialize(
+  {
+    adapter: 'postgres',
+    host:     ENV.fetch('DB_HOST'),
+    port:     ENV.fetch('DB_PORT').to_i,
+    database: ENV.fetch('DB_DATABASE'),
+    user:     ENV.fetch('DB_USER'),
+    password: ENV.fetch('DB_PASSWORD'),
+    test:     true,
+    logger:   Logger.new(STDOUT),
+  }
+)
