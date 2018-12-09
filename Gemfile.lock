@@ -3,9 +3,11 @@ PATH
   specs:
     issola (0.0.0)
       discordrb (~> 3.3.0)
+      pg
+      sequel
+      sequel_pg
 
 GEM
-  remote: https://rubygems.org/
   specs:
     discordrb (3.3.0)
       discordrb-webhooks (~> 3.3.0)
@@ -30,6 +32,8 @@ GEM
     netrc (0.11.0)
     opus-ruby (1.0.1)
       ffi
+    pg (1.1.3)
+    rake (12.3.2)
     rbnacl (3.4.0)
       ffi
     rest-client (2.1.0.rc1)
@@ -37,6 +41,10 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    sequel (5.15.0)
+    sequel_pg (1.11.0)
+      pg (>= 0.18.0)
+      sequel (>= 4.38.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
@@ -53,6 +61,7 @@ DEPENDENCIES
   bundler
   dotenv
   issola!
+  rake
   warning
 
 BUNDLED WITH

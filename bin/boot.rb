@@ -1,13 +1,23 @@
+# This file is intended to be used to set up your environment *when you are
+# working on this gem.*
+# If you are simply creating a bot based on this gem, chances are a simple
+# `require 'issola'` is what you want.
+
 $LOAD_PATH.unshift 'lib'
 
 APPLICATION_ENV = ENV.fetch('APPLICATION_ENV', 'development')
 
-require 'bundler'
-Bundler.require(:default, APPLICATION_ENV)
+if APPLICATION_ENV == 'development'
+  require 'dotenv'
+  require 'rake'
+  require 'warning'
+end
 
-# Ignore all warnings about uninitialized instane variables, as `sequel`
-# generates plenty of those.
-Warning.ignore(/instance variable @\w+ not initialized/)
+if Object.const_defined?(:Warning)
+  # Ignore all warnings about uninitialized instane variables, as `sequel`
+  # generates plenty of those.
+  Warning.ignore(/instance variable @\w+ not initialized/)
+end
 
 # Not limiting to specific environments, as we don't know which envs it might be used in.
 if Object.const_defined?(:Dotenv)
