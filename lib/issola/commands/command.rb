@@ -13,13 +13,16 @@ module Issola
         key:,
         max_pos_args: 0,
         min_pos_args: 0,
+        permission: nil,
         usage: nil
       )
-        @usage        = usage.to_s
+        @arguments    = arguments
+        @usage        = usage
         @description  = description.to_s
         @key          = key.to_s
         @max_pos_args = Integer(max_pos_args)
         @min_pos_args = Integer(min_pos_args)
+        @permission   = permission
 
         @option_parser = OptionParser.new
         @option_parser.banner = "Usage: `#{ key } #{ usage_instructions }`"
@@ -45,8 +48,15 @@ module Issola
       private
       def usage_instructions
         return @usage if @usage
-        return ''     if @arguments.empty?
-        return '[options]'
+
+        usage_msg = []
+        usage_msg << '[options]' unless @arguments.empty?
+        if @max_pos_args > 0
+          usage_msg += @min_pos_args.times.map { |i| "<arg#{ i } >" }
+          usage_msg += (@max_pos_args- @min_pos_args).times.map { |i| "[arg#{ i + @min_pos_args }]" }
+        end
+
+        return usage_msg.join(' ')
       end
     end
   end
