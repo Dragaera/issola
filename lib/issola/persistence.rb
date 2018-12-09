@@ -1,3 +1,6 @@
+require 'sequel'
+require 'pg'
+
 module Issola
   module Persistence
     def self.initialize(opts)
