@@ -7,13 +7,18 @@ module Issola
         token:     token,
       )
 
+      @user_manager = UserManager.new
+
       @command_handler = Commands::Handler.new(
         bot: self,
         command_prefix: command_prefix
       )
 
-      @bot.message(start_with: command_prefix) do |event|
-        @command_handler.handle(event)
+      @bot.message do |event|
+        @command_handler.handle_message(
+          event: event,
+          user: @user_manager.track(event)
+        )
       end
     end
 

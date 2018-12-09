@@ -13,9 +13,12 @@ module Issola
         @commands[command.key] = command
       end
 
-      def handle(event)
+      def handle_message(event:, user:)
+        msg = event.message.content
+        return false unless msg.start_with? @command_prefix
+
         # Remove command prefix
-        msg = event.message.content[@command_prefix.length..-1]
+        msg = msg[@command_prefix.length..-1]
         args = msg.split(' ')
         cmd_key = args.shift
 
