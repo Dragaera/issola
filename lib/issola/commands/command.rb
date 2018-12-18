@@ -58,6 +58,10 @@ module Issola
         usage_msg = []
         usage_msg << "Usage: #{ key }"
 
+        unless @named_usage || @arguments.empty?
+          usage_msg << "[options]"
+        end
+
         if @positional_usage
           usage_msg << @positional_usage
         else
@@ -65,10 +69,6 @@ module Issola
             usage_msg += @min_pos_args.times.map { |i| "<arg#{ i }>" }
             usage_msg += (@max_pos_args- @min_pos_args).times.map { |i| "[arg#{ i + @min_pos_args }]" }
           end
-        end
-
-        unless @named_usage || @arguments.empty?
-          usage_msg << "[options]"
         end
 
         usage << usage_msg.join(' ')
