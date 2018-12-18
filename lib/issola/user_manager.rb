@@ -4,12 +4,12 @@ module Issola
       current_nick = if event.server
                        event.author.display_name
                      else
-                       nil
+                       event.author.username
                      end
 
       DiscordUser.get_or_create(
         event.author.id.to_s,
-        last_nick: current_nick
+        last_nick: event.author.username
       )
     end
   end
