@@ -15,6 +15,7 @@ module Issola
 
       Sequel::Model.db = Sequel.connect(opts)
       Sequel::Model.db.loggers << Logger.new(STDOUT)
+      Sequel::Model.db.extension :pg_enum
     end
   end
 end

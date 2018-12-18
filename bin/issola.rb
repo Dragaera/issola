@@ -9,6 +9,7 @@ bot = Issola::Bot.new(
 )
 
 bot.register(Issola::Module::Internal.new)
+bot.register(Issola::Module::Permissions.new)
 
 puts "Invite me: #{ bot.invite_url }"
 bot.run

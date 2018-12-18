@@ -10,6 +10,7 @@ APPLICATION_ENV = ENV.fetch('APPLICATION_ENV', 'development')
 if APPLICATION_ENV == 'development'
   require 'dotenv'
   require 'rake'
+  require 'pry'
   require 'warning'
 end
 
