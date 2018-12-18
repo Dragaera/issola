@@ -13,7 +13,7 @@ module Issola
         @commands[command.key] = command
       end
 
-      def handle_message(event:, user:)
+      def handle_message(event:, user:, server:)
         msg = event.message.content
         return false unless msg.start_with? @command_prefix
 
@@ -24,12 +24,12 @@ module Issola
 
         cmd = @commands[cmd_key]
         if cmd
-          handle_command(cmd: cmd, args: args, event: event)
+          handle_command(cmd: cmd, args: args, event: event, user: user, server: server)
         end
       end
 
       private
-      def handle_command(cmd:, args:, event:)
+      def handle_command(cmd:, args:, event:, user: user, server: server)
         named_arguments = {}
         cmd.argument_store = named_arguments
         opt = cmd.option_parser
@@ -50,7 +50,9 @@ module Issola
           command: cmd,
           event: event,
           named_arguments: named_arguments,
-          positional_arguments: args
+          positional_arguments: args,
+          server: server,
+          user: user
         )
         cmd.action.call(event)
 

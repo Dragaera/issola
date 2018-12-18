@@ -2,12 +2,15 @@ require 'discordrb'
 
 module Issola
   class Bot
+    attr_reader :user_manager, :server_manager
+
     def initialize(token:, command_prefix:)
       @bot = Discordrb::Bot.new(
         token:     token,
       )
 
       @user_manager = UserManager.new
+      @server_manager = ServerManager.new
 
       @command_handler = Commands::Handler.new(
         bot: self,
@@ -15,9 +18,11 @@ module Issola
       )
 
       @bot.message do |event|
+        puts "Got message: #{ event.message.content.inspect }"
         @command_handler.handle_message(
           event: event,
-          user: @user_manager.track(event)
+          user: @user_manager.track(event),
+          server: @server_manager.track(event)
         )
       end
     end
