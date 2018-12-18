@@ -150,7 +150,7 @@ module Issola
 
         if entity_id
           type, entity = extract_entity(entity_id, event: event)
-          ds = ds.where(entity_type: type.to_s, entity_id: entity.id)
+          ds = ds.where(entity_type: type.to_s, entity_id: entity.id.to_s)
         end
 
         if entity_id
@@ -175,7 +175,7 @@ module Issola
                           role.name
                         end
 
-            event << "- #{ role_name }: #{ role.id }"
+            event << "- #{ role_name }: `#{ role.id }`"
           end
         else
           event << 'Not on a server.'
