@@ -1,7 +1,7 @@
 module Issola
   module Commands
     class Event
-      attr_reader :event, :positional_arguments, :server, :user
+      attr_reader :named_arguments, :positional_arguments, :server, :user
 
       def initialize(command:, event:, named_arguments:, positional_arguments:, server:, user:)
         @command              = command
@@ -16,8 +16,13 @@ module Issola
         @named_arguments[key]
       end
 
-      def <<(msg)
-        @event << msg
+      def discordrb_server
+        @event.server
+      end
+
+      def method_missing(m, *args, &block)
+        # Buggers used :send as an alias for :send_method
+        @event.__send__(m, *args, &block)
       end
     end
   end
