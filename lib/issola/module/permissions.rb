@@ -20,6 +20,20 @@ module Issola
 
         handler.register(
           Commands::Command.new(
+            key: :revoke,
+            description: 'Revoke permission from entity',
+            positional_usage: '<entity> <permission>',
+            min_pos_args: 2,
+            max_pos_args: 2,
+            arguments: [
+              [:global, '-g', '--global', 'Whether to revoke permission globally. If not specified, permission is revoked on current server.'],
+            ],
+            action: method(:cmd_revoke)
+          )
+        )
+
+        handler.register(
+          Commands::Command.new(
             key: :roles,
             description: 'List roles in current server',
             action: method(:cmd_roles)
@@ -29,6 +43,47 @@ module Issola
 
       private
       def cmd_grant(event)
+        global_server  = event.named_arguments[:global]
+        entity_id, key = event.positional_arguments
+
+        type, entity = extract_entity(entity_id, event: event)
+
+        if entity.nil?
+          event << "No such entity: `#{ entity_id }`"
+          return false
+        end
+
+        if type == :role && global_server
+          event << 'Cannot grant permission to role globally.'
+          return false
+        end
+
+        server = if global_server
+                   DiscordServer.global_server
+                 else
+                   event.server
+                 end
+
+        if server.nil?
+          event << "No such server: #{ server_id }"
+          return false
+        end
+
+        opts = {
+          entity_id:      entity.id.to_s,
+          entity_type:    type.to_s,
+          key:            key,
+          discord_server: server
+        }
+        if Permission.first(opts)
+          event << 'Permission already granted.'
+        else
+          Permission.create(opts)
+          event << "Granted `#{ key }` to #{ type } `#{ entity.name }` on #{ server.name }"
+        end
+      end
+
+      def cmd_revoke(event)
         global_server  = event.named_arguments[:global]
         entity_id, key = event.positional_arguments
 
@@ -56,11 +111,13 @@ module Issola
           key:            key,
           discord_server: server
         }
-        if Permission.first(opts)
-          event << 'Permission already granted.'
+        perm = Permission.first(opts)
+
+        if perm
+          perm.delete
+          event << "Revoked `#{ key }` from #{ type } `#{ entity.name }` on #{ server.name }"
         else
-          Permission.create(opts)
-          event << "Granted `#{ key }` to #{ type } `#{ entity.name }` on #{ server.name }"
+          event << 'No such permission granted.'
         end
       end
 
