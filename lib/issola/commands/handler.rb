@@ -29,7 +29,7 @@ module Issola
       end
 
       private
-      def handle_command(cmd:, args:, event:, user: user, server: server)
+      def handle_command(cmd:, args:, event:, user:, server:)
         named_arguments = {}
         cmd.argument_store = named_arguments
         opt = cmd.option_parser
