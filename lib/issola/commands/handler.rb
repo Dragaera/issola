@@ -37,7 +37,7 @@ module Issola
         begin
           opt.parse!(args)
         rescue OptionParser::InvalidOption
-          event << opt.help
+          event << cmd.usage_instructions
           return false
         end
 
