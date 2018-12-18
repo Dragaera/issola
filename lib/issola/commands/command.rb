@@ -3,7 +3,7 @@ require 'optparse'
 module Issola
   module Commands
     class Command
-      attr_reader :action, :description, :key, :option_parser, :max_pos_args, :min_pos_args
+      attr_reader :action, :description, :key, :option_parser, :max_pos_args, :min_pos_args, :permission
       attr_accessor :argument_store
 
       def initialize(

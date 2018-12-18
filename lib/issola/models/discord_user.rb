@@ -11,5 +11,16 @@ module Issola
         DiscordUser.create(discord_id: discord_id, last_nick: last_nick)
       end
     end
+
+    def permissions(server: nil)
+      ds = Permission.where(
+        entity_type: 'user',
+        entity_id: discord_id
+      )
+
+      ds = ds.where(discord_server: server) if server
+
+      ds
+    end
   end
 end

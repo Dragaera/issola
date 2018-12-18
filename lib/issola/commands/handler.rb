@@ -15,8 +15,7 @@ module Issola
 
       def handle_message(event:, user:, server:)
         msg = event.message.content
-        return false unless msg.start_with? @command_prefix
-
+        return false unless msg.start_with? @command_prefix 
         # Remove command prefix
         msg = msg[@command_prefix.length..-1]
         args = msg.split(' ')
@@ -33,6 +32,11 @@ module Issola
         named_arguments = {}
         cmd.argument_store = named_arguments
         opt = cmd.option_parser
+
+        unless verify_access(cmd: cmd, event: event, user: user, server: server)
+          event << "You are not allowed to perform this action. Required permission: `#{ cmd.permission }`."
+          return false
+        end
 
         begin
           opt.parse!(args)
@@ -57,6 +61,23 @@ module Issola
         cmd.action.call(event)
 
         return true
+      end
+
+      def verify_access(cmd: cmd, event: event, user: user, server: server)
+        return true unless cmd.permission
+
+        # User-level permissions on current server, or globally
+        if user.permissions(server: [server, DiscordServer.global_server]).first(key: cmd.permission)
+          return true
+        end
+
+        # Role-based permissions on current server.
+        role_ids = event.author.roles.map { |r| r.id.to_s }
+        if Permission.first(entity_type: 'role', entity_id: role_ids, discord_server: server, key: cmd.permission)
+          return true
+        end
+
+        return false
       end
     end
   end
