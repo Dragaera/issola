@@ -34,6 +34,20 @@ module Issola
 
         handler.register(
           Commands::Command.new(
+            key: :permissions,
+            description: 'Show permissions of entity',
+            positional_usage: '<entity>',
+            min_pos_args: 0,
+            max_pos_args: 1,
+            arguments: [
+              [:global, '-g', '--global', 'Whether to show global permissions. If not specified, permission on current server are shown.'],
+            ],
+            action: method(:cmd_permissions)
+          )
+        )
+
+        handler.register(
+          Commands::Command.new(
             key: :roles,
             description: 'List roles in current server',
             action: method(:cmd_roles)
@@ -118,6 +132,35 @@ module Issola
           event << "Revoked `#{ key }` from #{ type } `#{ entity.name }` on #{ server.name }"
         else
           event << 'No such permission granted.'
+        end
+      end
+
+      def cmd_permissions(event)
+        global_server = event.named_arguments[:global]
+        entity_id     = event.positional_arguments[0]
+
+        ds = Permission.dataset
+
+        server = if global_server
+                   DiscordServer.global_server
+                 else
+                   event.server
+                 end
+        ds = ds.where(discord_server: server)
+
+        if entity_id
+          type, entity = extract_entity(entity_id, event: event)
+          ds = ds.where(entity_type: type.to_s, entity_id: entity.id)
+        end
+
+        if entity_id
+          event << "Permissions for #{ type } #{ entity.name } on #{ server.name }:"
+        else
+          event << "Permissions on #{ server.name }:"
+        end
+
+        ds.each do |perm|
+          event << "- #{ perm.key } for #{ perm.entity_type } #{ perm.entity_id }"
         end
       end
 
