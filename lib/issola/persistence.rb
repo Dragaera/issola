@@ -1,3 +1,5 @@
+require 'logger'
+
 require 'sequel'
 require 'pg'
 
@@ -12,6 +14,7 @@ module Issola
       Sequel::Model.plugin :timestamps
 
       Sequel::Model.db = Sequel.connect(opts)
+      Sequel::Model.db.loggers << Logger.new(STDOUT)
     end
   end
 end
