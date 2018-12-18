@@ -42,7 +42,7 @@ module Issola
         end
 
         unless args.length.between?(cmd.min_pos_args, cmd.max_pos_args)
-          event << opt.help
+          event << cmd.usage_instructions
           return false
         end
 
