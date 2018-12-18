@@ -11,7 +11,7 @@ module Issola
           Commands::Command.new(
             key: :help,
             description: 'Show bot commands',
-            usage: '[command]',
+            positional_usage: '[command]',
             min_pos_args: 0,
             max_pos_args: 1,
             action: method(:cmd_help),
@@ -30,6 +30,7 @@ module Issola
           Commands::Command.new(
             key: :servers,
             description: 'Show servers the bot is in',
+            permission: 'internal.servers',
             action: method(:cmd_servers)
           )
         )
@@ -56,7 +57,7 @@ module Issola
       def show_command_usage(key, event:)
         cmd = @handler.commands[key]
         if cmd
-          event << cmd.option_parser.help
+          event << cmd.usage_instructions
         else
           event << "No such command: #{ key }"
         end

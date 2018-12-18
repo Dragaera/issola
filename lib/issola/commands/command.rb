@@ -14,18 +14,22 @@ module Issola
         max_pos_args: 0,
         min_pos_args: 0,
         permission: nil,
-        usage: nil
+        usage: nil,
+        named_usage: nil,
+        positional_usage: nil
       )
-        @arguments    = arguments
-        @usage        = usage
-        @description  = description.to_s
-        @key          = key.to_s
-        @max_pos_args = Integer(max_pos_args)
-        @min_pos_args = Integer(min_pos_args)
-        @permission   = permission
+        @arguments        = arguments
+        @usage            = usage
+        @positional_usage = positional_usage
+        @named_usage      = named_usage
+        @description      = description.to_s
+        @key              = key.to_s
+        @max_pos_args     = Integer(max_pos_args)
+        @min_pos_args     = Integer(min_pos_args)
+        @permission       = permission
 
         @option_parser = OptionParser.new
-        @option_parser.banner = "Usage: `#{ key } #{ usage_instructions }`"
+        @option_parser.banner = ''
 
         self.action = action if action
 
@@ -45,18 +49,43 @@ module Issola
         end
       end
 
-      private
       def usage_instructions
         return @usage if @usage
 
+        usage = []
+        usage << '```'
+
         usage_msg = []
-        usage_msg << '[options]' unless @arguments.empty?
-        if @max_pos_args > 0
-          usage_msg += @min_pos_args.times.map { |i| "<arg#{ i } >" }
-          usage_msg += (@max_pos_args- @min_pos_args).times.map { |i| "[arg#{ i + @min_pos_args }]" }
+        usage_msg << "Usage: #{ key }"
+
+        if @positional_usage
+          usage_msg << @positional_usage
+        else
+          if @max_pos_args > 0
+            usage_msg += @min_pos_args.times.map { |i| "<arg#{ i }>" }
+            usage_msg += (@max_pos_args- @min_pos_args).times.map { |i| "[arg#{ i + @min_pos_args }]" }
+          end
         end
 
-        return usage_msg.join(' ')
+        unless @named_usage || @arguments.empty?
+          usage_msg << "[options]"
+        end
+
+        usage << usage_msg.join(' ')
+
+        if @named_usage
+          usage << @named_usage
+        else
+          unless @arguments.empty?
+            # Includes a linebreak between (empty) banner and argument
+            # descriptions.
+            usage << @option_parser.to_s.gsub(/^\n/, '')
+          end
+        end
+
+        usage << '```'
+
+        return usage.join("\n")
       end
     end
   end
