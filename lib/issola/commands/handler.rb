@@ -63,7 +63,7 @@ module Issola
         return true
       end
 
-      def verify_access(cmd: cmd, event: event, user: user, server: server)
+      def verify_access(cmd:, event:, user:, server:)
         return true unless cmd.permission
 
         # User-level permissions on current server, or globally
