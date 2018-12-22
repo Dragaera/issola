@@ -14,6 +14,7 @@ module Issola
             positional_usage: '[command]',
             min_pos_args: 0,
             max_pos_args: 1,
+            permission: 'internal.help',
             action: method(:cmd_help),
           )
         )
@@ -22,6 +23,7 @@ module Issola
           Commands::Command.new(
             key: :version,
             description: 'Show bot version',
+            permission: 'internal.version',
             action: method(:cmd_version)
           )
         )
