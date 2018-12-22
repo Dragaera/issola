@@ -1,7 +1,7 @@
 module Issola
   class ServerManager
     def track(event)
-      return nil unless event.server
+      return DiscordServer.global_server unless event.server
 
       DiscordServer.get_or_create(
         discord_id: event.server.id.to_s,

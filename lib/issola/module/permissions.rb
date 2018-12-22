@@ -211,12 +211,29 @@ module Issola
         elsif entity.is_a? Discordrb::Role
           return :role, entity
         elsif entity.nil?
-          entity = server.member(id)
-          return :user, entity if entity
+          # If a server is present, we prefer actual entity lookup, as this
+          # ensures no typos are made, and we have a proper name to work with.
+          if server
+            entity = server.member(id)
+            return :user, entity if entity
 
-          entity = server.role(id)
-          return :role, entity if entity
+            entity = server.role(id)
+            return :role, entity if entity
+          end
 
+          # If no server is present, or the entity was not found on the server
+          # (because they eg left), we will check if it is a tracked user.
+          if (user = DiscordUser.first(discord_id: id))
+            return :user, Struct::Entity.new(user.discord_id, user.last_nick)
+          end
+
+          # If this failed too, we'll check if the entity is known due to
+          # previous permissions.
+          if (perm = Permission.first(entity_id: id))
+            return perm.entity_type, Struct::Entity.new(perm.entity_id, perm.entity_id)
+          end
+
+          # Unknown entity.
           return nil, nil
         end
       end
