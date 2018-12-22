@@ -45,6 +45,10 @@ module Issola
           return false
         end
 
+        # Support eg quoating multiple words, for them to be treated as one
+        # argument.
+        arg_string = args.join(' ')
+        args = arg_string.shellsplit
         unless args.length.between?(cmd.min_pos_args, cmd.max_pos_args)
           event << cmd.usage_instructions
           return false
