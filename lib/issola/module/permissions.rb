@@ -14,6 +14,7 @@ module Issola
             arguments: [
               [:global, '-g', '--global', 'Whether to grant permission globally. If not specified, permission is granted on current server.'],
             ],
+            permission: 'permissions.write',
             action: method(:cmd_grant)
           )
         )
@@ -28,6 +29,7 @@ module Issola
             arguments: [
               [:global, '-g', '--global', 'Whether to revoke permission globally. If not specified, permission is revoked on current server.'],
             ],
+            permission: 'permissions.write',
             action: method(:cmd_revoke)
           )
         )
@@ -42,6 +44,7 @@ module Issola
             arguments: [
               [:global, '-g', '--global', 'Whether to show global permissions. If not specified, permission on current server are shown.'],
             ],
+            permission: 'permissions.read',
             action: method(:cmd_permissions)
           )
         )
