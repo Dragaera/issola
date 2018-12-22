@@ -66,14 +66,29 @@ module Issola
       def verify_access(cmd:, event:, user:, server:)
         return true unless cmd.permission
 
+        # 'Everyone' permissions on current server, or globally
+        if Permission.first(
+            entity_type: 'user',
+            entity_id: Module::Permissions::EVERYONE_ENTITY_ID,
+            discord_server: [server, DiscordServer.global_server],
+            key: cmd.permission
+        )
+          return true
+        end
+
         # User-level permissions on current server, or globally
-        if user.permissions(server: [server, DiscordServer.global_server]).first(key: cmd.permission)
+        if user.permissions(discord_server: [server, DiscordServer.global_server]).first(key: cmd.permission)
           return true
         end
 
         # Role-based permissions on current server.
         role_ids = event.author.roles.map { |r| r.id.to_s }
-        if Permission.first(entity_type: 'role', entity_id: role_ids, discord_server: server, key: cmd.permission)
+        if Permission.first(
+            entity_type: 'role',
+            entity_id: role_ids,
+            discord_server: server,
+            key: cmd.permission
+        )
           return true
         end
 

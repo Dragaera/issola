@@ -12,13 +12,13 @@ module Issola
       end
     end
 
-    def permissions(server: nil)
+    def permissions(discord_server: nil)
       ds = Permission.where(
         entity_type: 'user',
         entity_id: discord_id
       )
 
-      ds = ds.where(discord_server: server) if server
+      ds = ds.where(discord_server: discord_server) if discord_server
 
       ds
     end

@@ -1,6 +1,13 @@
 module Issola
   module Module
     class Permissions
+      Struct.new("Entity", :id, :name)
+      # Abusing the fact that the snowflake format used for entity IDs will
+      # never be `1` for proper entities.
+      EVERYONE_ENTITY_ID = '1'.freeze
+      EVERYONE_ENTITY_NAME = 'everyone'.freeze
+      EVERYONE_ENTITY = Struct::Entity.new(EVERYONE_ENTITY_ID, 'Everyone')
+
       def register(handler)
         @handler = handler
 
@@ -163,7 +170,15 @@ module Issola
         end
 
         ds.each do |perm|
-          event << "- #{ perm.key } for #{ perm.entity_type } #{ perm.entity_id }"
+          identifier = if perm.entity_id == EVERYONE_ENTITY_ID
+                         EVERYONE_ENTITY_NAME
+                       else
+                         # Preventing lots of user/role lookups if many
+                         # permissions around - at the cost of just showing
+                         # numeric IDs.
+                         perm.entity_id
+                       end
+          event << "- #{ perm.key } for #{ perm.entity_type } `#{ identifier }`"
         end
       end
 
@@ -186,6 +201,8 @@ module Issola
       end
 
       def extract_entity(id, event:)
+        return :user, EVERYONE_ENTITY if id == EVERYONE_ENTITY_NAME
+
         server = event.discordrb_server
 
         entity = event.bot.parse_mention(id)
