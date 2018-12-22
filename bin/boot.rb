@@ -29,7 +29,8 @@ else
   puts 'Dotenv not available, skipping.'
 end
 
-require 'issola/persistence'
+require 'issola'
+
 Issola::Persistence.initialize(
   {
     adapter: 'postgres',
@@ -41,5 +42,3 @@ Issola::Persistence.initialize(
     test:     true,
   }
 )
-
-require 'issola'

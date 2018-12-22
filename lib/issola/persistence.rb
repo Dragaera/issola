@@ -16,6 +16,9 @@ module Issola
       Sequel::Model.db = Sequel.connect(opts)
       Sequel::Model.db.loggers << Logger.new(STDOUT)
       Sequel::Model.db.extension :pg_enum
+
+      # Have to be loaded after DB connection is set up.
+      require 'issola/models' unless ENV.fetch('ISSOLA_SKIP_MODELS', 0).to_i == 1
     end
   end
 end
