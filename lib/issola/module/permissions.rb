@@ -60,6 +60,7 @@ module Issola
           Commands::Command.new(
             key: :roles,
             description: 'List roles in current server',
+            permission: 'permissions.roles',
             action: method(:cmd_roles)
           )
         )
