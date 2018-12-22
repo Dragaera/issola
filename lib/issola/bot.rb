@@ -2,15 +2,17 @@ require 'discordrb'
 
 module Issola
   class Bot
-    attr_reader :user_manager, :server_manager
+    attr_reader :user_manager, :server_manager, :admin_users
 
-    def initialize(token:, command_prefix:)
+    def initialize(token:, command_prefix:, admin_users: [])
       @bot = Discordrb::Bot.new(
         token:     token,
       )
 
       @user_manager = UserManager.new
       @server_manager = ServerManager.new
+
+      @admin_users = Set.new(admin_users).freeze
 
       @command_handler = Commands::Handler.new(
         bot: self,

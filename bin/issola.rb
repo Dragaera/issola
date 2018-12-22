@@ -5,6 +5,7 @@ puts 'Starting bot'
 
 bot = Issola::Bot.new(
   token: ENV.fetch('DISCORD_TOKEN'),
+  admin_users: [ENV.fetch('ADMIN_USER')],
   command_prefix: '!'
 )
 

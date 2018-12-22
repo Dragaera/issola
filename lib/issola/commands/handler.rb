@@ -66,6 +66,8 @@ module Issola
       def verify_access(cmd:, event:, user:, server:)
         return true unless cmd.permission
 
+        return true if @bot.admin_users.include? user.discord_id
+
         # 'Everyone' permissions on current server, or globally
         if Permission.first(
             entity_type: 'user',
