@@ -9,12 +9,16 @@ namespace :issola do
       ENV['ISSOLA_SKIP_MODELS'] = '1'
       require 'bin/boot'
 
+      # Should ensure it works no matter where the framework is installed - eg if
+      # pulled in as a geme.
+      migrations_path = File.join(__dir__, '..', '..', '..', 'db', 'migrations')
+
       Sequel.extension :migration
       db = Sequel::Model.db
       if args[:version]
-        Sequel::Migrator.run(db, "db/migrations", target: args[:version].to_i)
+        Sequel::Migrator.run(db, migrations_path, target: args[:version].to_i)
       else
-        Sequel::Migrator.run(db, "db/migrations")
+        Sequel::Migrator.run(db, migrations_path)
       end
     end
   end
