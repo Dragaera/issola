@@ -62,7 +62,11 @@ module Issola
           server: server,
           user: user
         )
-        cmd.action.call(event)
+
+        unless cmd.action.call(event)
+          event << cmd.usage_instructions
+          return false
+        end
 
         return true
       end
