@@ -1,5 +1,9 @@
 namespace :issola do
   namespace :db do
+    # Using a separate table to track migrations will allow users of this gem
+    # to create tables of their own, using Sequel's migrations.
+    ISSOLA_SEQUEL_SCHEMA_TABLE = :schema_issola
+
     desc 'Apply DB migrations of Issola up to `version`, all if none specified.'
     task :migrate, [:version] do |t, args|
       # Don't load models when executing DB migrations.
@@ -16,9 +20,9 @@ namespace :issola do
       Sequel.extension :migration
       db = Sequel::Model.db
       if args[:version]
-        Sequel::Migrator.run(db, migrations_path, target: args[:version].to_i)
+        Sequel::Migrator.run(db, migrations_path, target: args[:version].to_i, table: ISSOLA_SEQUEL_SCHEMA_TABLE)
       else
-        Sequel::Migrator.run(db, migrations_path)
+        Sequel::Migrator.run(db, migrations_path, table: ISSOLA_SEQUEL_SCHEMA_TABLE)
       end
     end
   end
